@@ -1,9 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from './prismaClient';
 import bcrypt from 'bcrypt';
 import { generateToken } from './utils/generateToken';
-
-const prisma = new PrismaClient();
-
 
 // User Registration
 export const createUser = async (fullName: string, email: string, password: string) => {
@@ -71,20 +68,33 @@ export const getAllTasks = (userId: number) => {
 
 //get task by id
 export const getTaskById = (id: number, userId: number) => {
- return prisma.task.findFirst({where: {id, ownerId: userId}}); 
+  return prisma.task.findFirst({
+    where: {
+      id, 
+      ownerId: userId,
+    },
+  });
 };
+
+
 
 //updating a task
 export const updateTask = (
   id: number,
   userId: number,
-  data: Partial<{ title: string; description: string; status: string; dueDate: Date }>
+  data: Partial<{ title: string; description: string; status: string; dueDate: string | null }>
 ) => {
+  const { dueDate, ...rest } = data;
+
   return prisma.task.updateMany({
-where: {id, ownerId: userId},
-data,
+    where: { id, ownerId: userId },
+    data: {
+      ...rest,
+      dueDate: dueDate ? new Date(dueDate) : null, 
+    },
   });
-}
+};
+
 
 //deleting a task
 export const deleteTask = (id: number, userId:number) => {

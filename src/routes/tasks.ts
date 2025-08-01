@@ -24,16 +24,6 @@ router.post('/createTask',
 router.get('/getAllTask',
   Auth,
   asyncHandler (async (req: Request, res: Response) => {
-
-  const userId = parseInt(req.user!.id, 10)
-  const task = await getAllTasks(userId);
-  res.status(201).json({ message: 'Gotten all tasks successfully', task });
-})
-);
-
-router.get('/getAllTask',
-  Auth,
-  asyncHandler (async (req: Request, res: Response) => {
     
   const userId = parseInt(req.user!.id, 10)
   const task = await getAllTasks(userId);
@@ -44,8 +34,17 @@ router.get('/getAllTask',
 router.get('/getTaskById/:id',
   Auth,
   asyncHandler (async (req: Request, res: Response) => {
-    
+     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    console.log("User ID:", req.user!.id);
+    console.log("Task ID param:", req.params.id);
+
   const userId = parseInt(req.user!.id, 10)
+  const taskId = parseInt(req.params.id, 10);
+
+if (isNaN(taskId)) {
+  return res.status(400).json({ message: "Invalid task ID" });
+}
   const task = await getTaskById(Number(req.params.id), userId);
   task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
 })
@@ -54,10 +53,16 @@ router.get('/getTaskById/:id',
 router.put('/updateTask/:id',
 Auth,
 asyncHandler (async (req: Request, res: Response) => {
+   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   const userId = parseInt(req.user!.id, 10)
   const task = await updateTask(Number(req.params.id), userId, req.body);
-  task.count ? res.json(task) : res.status(404).json({ message: 'Task Updated' });
+  if (task.count > 0) {
+  res.json({ message: "Task updated successfully" });
+} else {
+  res.status(404).json({ message: "Task not found or not updated" });
+}
+
 })
 );
 
