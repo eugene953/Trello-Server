@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getAllTasks = exports.createTask = exports.loginUser = exports.createUser = void 0;
+exports.updateCard = exports.deleteCard = exports.createCard = exports.deleteColumn = exports.getColumnById = exports.getAllColumns = exports.createColumn = exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getAllTasks = exports.createTask = exports.loginUser = exports.createUser = void 0;
 const prismaClient_1 = __importDefault(require("./prismaClient"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generateToken_1 = require("./utils/generateToken");
@@ -57,14 +57,23 @@ const getAllTasks = (userId) => {
 exports.getAllTasks = getAllTasks;
 //get task by id
 const getTaskById = (id, userId) => {
-    return prismaClient_1.default.task.findFirst({ where: { id, ownerId: userId } });
+    return prismaClient_1.default.task.findFirst({
+        where: {
+            id,
+            ownerId: userId,
+        },
+    });
 };
 exports.getTaskById = getTaskById;
 //updating a task
 const updateTask = (id, userId, data) => {
+    const { dueDate, ...rest } = data;
     return prismaClient_1.default.task.updateMany({
         where: { id, ownerId: userId },
-        data,
+        data: {
+            ...rest,
+            dueDate: dueDate ? new Date(dueDate) : null,
+        },
     });
 };
 exports.updateTask = updateTask;
@@ -75,3 +84,40 @@ const deleteTask = (id, userId) => {
     });
 };
 exports.deleteTask = deleteTask;
+//Columns
+//create column
+const createColumn = async (title) => {
+    return prismaClient_1.default.column.create({ data: { title } });
+};
+exports.createColumn = createColumn;
+//get all column
+const getAllColumns = async () => {
+    return prismaClient_1.default.column.findMany({ include: { cards: true } });
+};
+exports.getAllColumns = getAllColumns;
+//get column by id
+const getColumnById = async (id) => {
+    return prismaClient_1.default.column.findUnique({ where: { id }, include: { cards: true } });
+};
+exports.getColumnById = getColumnById;
+//delete column
+const deleteColumn = async (id) => {
+    return prismaClient_1.default.column.delete({ where: { id } });
+};
+exports.deleteColumn = deleteColumn;
+//card
+//createCard
+const createCard = async (title, columnId) => {
+    return prismaClient_1.default.card.create({ data: { title, columnId } });
+};
+exports.createCard = createCard;
+//deleteCard
+const deleteCard = async (id) => {
+    return prismaClient_1.default.card.delete({ where: { id } });
+};
+exports.deleteCard = deleteCard;
+//updateCard
+const updateCard = async (id, title) => {
+    return prismaClient_1.default.card.update({ where: { id }, data: { title } });
+};
+exports.updateCard = updateCard;

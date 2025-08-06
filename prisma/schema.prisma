@@ -33,4 +33,15 @@ model Task {
 
   @@map("tasks")
 }
+model Column {
+  id    Int    @id @default(autoincrement())
+  title String
+  cards Card[]
+}
 
+model Card {
+  id        Int     @id @default(autoincrement())
+  title     String
+  columnId  Int
+  column    Column  @relation(fields: [columnId], references: [id])
+}

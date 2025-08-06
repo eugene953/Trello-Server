@@ -76,8 +76,6 @@ export const getTaskById = (id: number, userId: number) => {
   });
 };
 
-
-
 //updating a task
 export const updateTask = (
   id: number,
@@ -103,3 +101,42 @@ export const deleteTask = (id: number, userId:number) => {
   });
 };
 
+//Columns
+
+//create column
+export const createColumn = async (title: string) => {
+  return prisma.column.create({data:{title}});
+}
+
+//get all column
+export const getAllColumns = async () => {
+  return prisma.column.findMany({include:{ cards: true }});
+}
+
+//get column by id
+export const getColumnById = async (id: number) => {
+  return prisma.column.findUnique({ where: { id }, include: { cards: true } });
+};
+
+//delete column
+export const deleteColumn = async (id: number) => {
+  return prisma.column.delete({ where: { id } });
+};
+
+
+//card
+
+//createCard
+export const createCard = async (title: string, columnId: number) => {
+  return prisma.card.create({ data: { title, columnId } });
+};
+
+//deleteCard
+export const deleteCard = async (id: number) => {
+  return prisma.card.delete({ where: { id } });
+};
+
+//updateCard
+export const updateCard = async (id: number, title: string) => {
+  return prisma.card.update({ where: { id }, data: { title } });
+};

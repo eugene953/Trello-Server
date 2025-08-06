@@ -26,7 +26,13 @@ router.get('/getAllTask', auth_1.default, (0, asynHandler_1.asyncHandler)(async 
 router.get('/getTaskById/:id', auth_1.default, (0, asynHandler_1.asyncHandler)(async (req, res) => {
     if (!req.user)
         return res.status(401).json({ message: "Unauthorized" });
+    console.log("User ID:", req.user.id);
+    console.log("Task ID param:", req.params.id);
     const userId = parseInt(req.user.id, 10);
+    const taskId = parseInt(req.params.id, 10);
+    if (isNaN(taskId)) {
+        return res.status(400).json({ message: "Invalid task ID" });
+    }
     const task = await (0, models_1.getTaskById)(Number(req.params.id), userId);
     task ? res.json(task) : res.status(404).json({ message: 'Task not found' });
 }));

@@ -8,6 +8,8 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const users_1 = __importDefault(require("./routes/users"));
 const tasks_1 = __importDefault(require("./routes/tasks"));
+const list_1 = __importDefault(require("./routes/list"));
+const card_1 = __importDefault(require("./routes/card"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT;
@@ -19,6 +21,8 @@ app.get('/', (req, res) => {
 // Register routes
 app.use('/api', users_1.default);
 app.use('/api', tasks_1.default);
+app.use('/api', list_1.default);
+app.use('/api', card_1.default);
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
