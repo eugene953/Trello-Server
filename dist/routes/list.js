@@ -5,8 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const models_1 = require("../models");
+const asynHandler_1 = require("../utils/asynHandler");
+const auth_1 = __importDefault(require("../auth"));
 const router = express_1.default.Router();
-router.post('/createColumn', async (req, res) => {
+router.post('/createColumn', auth_1.default, (0, asynHandler_1.asyncHandler)(async (req, res) => {
     try {
         const column = await (0, models_1.createColumn)(req.body.title);
         res.status(201).json(column);
@@ -14,17 +16,18 @@ router.post('/createColumn', async (req, res) => {
     catch {
         res.status(500).json({ error: 'Failed to create column' });
     }
-});
-router.get('/getAllColumn', async (req, res) => {
+}));
+router.get('/getAllColumn', auth_1.default, (0, asynHandler_1.asyncHandler)(async (req, res) => {
     try {
         const columns = await (0, models_1.getAllColumns)();
         res.json(columns);
     }
-    catch {
+    catch (error) {
+        console.error('Error getting columns:', error);
         res.status(500).json({ error: 'Failed to get columns' });
     }
-});
-router.get('/getColumnById/:id', async (req, res) => {
+}));
+router.get('/getColumnById/:id', auth_1.default, (0, asynHandler_1.asyncHandler)(async (req, res) => {
     try {
         const column = await (0, models_1.getColumnById)(+req.params.id);
         if (!column)
@@ -34,8 +37,8 @@ router.get('/getColumnById/:id', async (req, res) => {
     catch {
         res.status(500).json({ error: 'Failed to get column' });
     }
-});
-router.delete('/deleteColumn/:id', async (req, res) => {
+}));
+router.delete('/deleteColumn/:id', auth_1.default, (0, asynHandler_1.asyncHandler)(async (req, res) => {
     try {
         await (0, models_1.deleteColumn)(+req.params.id);
         res.json({ message: 'Column deleted' });
@@ -43,5 +46,5 @@ router.delete('/deleteColumn/:id', async (req, res) => {
     catch {
         res.status(500).json({ error: 'Failed to delete column' });
     }
-});
+}));
 exports.default = router;
