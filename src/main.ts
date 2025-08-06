@@ -6,7 +6,7 @@ import users from './routes/users';
 import tasks from './routes/tasks';
 import list from './routes/list';
 import card from './routes/card';
-import { swaggerUiHandler, swaggerDocHandler } from './swagger/swagger';
+import { swaggerUiHandler, swaggerDocHandler } from './swagger';
 
 dotenv.config();
 
