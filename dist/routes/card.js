@@ -14,7 +14,8 @@ router.post('/createCard', auth_1.default, (0, asynHandler_1.asyncHandler)(async
         const card = await (0, models_1.createCard)(title, columnId);
         res.status(201).json(card);
     }
-    catch {
+    catch (error) {
+        console.error("Error creating card", error);
         res.status(500).json({ error: 'Failed to create card' });
     }
 }));

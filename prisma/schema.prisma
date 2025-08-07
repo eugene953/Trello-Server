@@ -15,12 +15,12 @@ model User {
   password   String
   created_at DateTime @default(now())
 
-  tasks Task[]
+  project Project[]
 
   @@map("users")
 }
 
-model Task {
+model Project {
   id           Int      @id @default(autoincrement())
   title        String
   description  String?
@@ -29,19 +29,21 @@ model Task {
   ownerId      Int      @map("owner_id")
   owner        User     @relation(fields: [ownerId], references: [id])
   created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
 
-  @@map("tasks")
+ tasks        Task[]
+
+  @@map("projects")
 }
-model Column {
+model Task {
   id    Int    @id @default(autoincrement())
   title String
-  cards Card[]
+  description  String?
+  status       String  
+  dueDate      DateTime?  @map("due_date")
+  projectId    Int       @map("project_id")
+  project      Project   @relation(fields: [projectId], references: [id])
+  
+   @@map("tasks")
 }
 
-model Card {
-  id        Int     @id @default(autoincrement())
-  title     String
-  columnId  Int
-  column    Column  @relation(fields: [columnId], references: [id])
-}
+

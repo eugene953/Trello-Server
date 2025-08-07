@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCard = exports.deleteCard = exports.createCard = exports.deleteColumn = exports.getColumnById = exports.getAllColumns = exports.createColumn = exports.deleteTask = exports.updateTask = exports.getTaskById = exports.getAllTasks = exports.createTask = exports.loginUser = exports.createUser = void 0;
+exports.updateCard = exports.deleteCard = exports.createCard = exports.deleteColumn = exports.getColumnById = exports.getAllColumns = exports.createColumn = exports.deleteProject = exports.updateProject = exports.getProjectById = exports.getAllProjects = exports.createProject = exports.loginUser = exports.createUser = void 0;
 const prismaClient_1 = __importDefault(require("./prismaClient"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generateToken_1 = require("./utils/generateToken");
@@ -38,9 +38,9 @@ const loginUser = async (email, password) => {
     return { user, token };
 };
 exports.loginUser = loginUser;
-// createTask
-const createTask = (userId, title, description, dueDate) => {
-    return prismaClient_1.default.task.create({
+// Create a project
+const createProject = (userId, title, description, dueDate) => {
+    return prismaClient_1.default.project.create({
         data: {
             title,
             description,
@@ -49,26 +49,28 @@ const createTask = (userId, title, description, dueDate) => {
         },
     });
 };
-exports.createTask = createTask;
-//get all task
-const getAllTasks = (userId) => {
-    return prismaClient_1.default.task.findMany({ where: { ownerId: userId } });
+exports.createProject = createProject;
+// Get all projects for a user
+const getAllProjects = (userId) => {
+    return prismaClient_1.default.project.findMany({
+        where: { ownerId: userId },
+    });
 };
-exports.getAllTasks = getAllTasks;
-//get task by id
-const getTaskById = (id, userId) => {
-    return prismaClient_1.default.task.findFirst({
+exports.getAllProjects = getAllProjects;
+// Get project by ID
+const getProjectById = (id, userId) => {
+    return prismaClient_1.default.project.findFirst({
         where: {
             id,
             ownerId: userId,
         },
     });
 };
-exports.getTaskById = getTaskById;
-//updating a task
-const updateTask = (id, userId, data) => {
+exports.getProjectById = getProjectById;
+// Update a project
+const updateProject = (id, userId, data) => {
     const { dueDate, ...rest } = data;
-    return prismaClient_1.default.task.updateMany({
+    return prismaClient_1.default.project.updateMany({
         where: { id, ownerId: userId },
         data: {
             ...rest,
@@ -76,14 +78,14 @@ const updateTask = (id, userId, data) => {
         },
     });
 };
-exports.updateTask = updateTask;
-//deleting a task
-const deleteTask = (id, userId) => {
-    return prismaClient_1.default.task.deleteMany({
+exports.updateProject = updateProject;
+// Delete a project
+const deleteProject = (id, userId) => {
+    return prismaClient_1.default.project.deleteMany({
         where: { id, ownerId: userId },
     });
 };
-exports.deleteTask = deleteTask;
+exports.deleteProject = deleteProject;
 //Columns
 //create column
 const createColumn = async (title) => {

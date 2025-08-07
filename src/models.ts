@@ -42,101 +42,126 @@ export const loginUser = async (email: string, password: string) => {
   return { user, token };
 };
 
-
-// createTask
-export const createTask = (
-    userId: number,
-    title:string,
-    description?: string,
-    dueDate?: Date
+// Create a project
+export const createProject = (
+  userId: number,
+  title: string,
+  description?: string,
+  dueDate?: Date
 ) => {
-    return prisma.task.create({
-
-        data: {
-            title,
-            description,
-            dueDate,
-            ownerId: userId,
-        },
-    })
-}
-
-//get all task
-export const getAllTasks = (userId: number) => {
-  return prisma.task.findMany({where: {ownerId: userId}});
-};
-
-//get task by id
-export const getTaskById = (id: number, userId: number) => {
-  return prisma.task.findFirst({
-    where: {
-      id, 
+  return prisma.project.create({
+    data: {
+      title,
+      description,
+      dueDate,
       ownerId: userId,
     },
   });
 };
 
-//updating a task
-export const updateTask = (
-  id: number,
-  userId: number,
-  data: Partial<{ title: string; description: string; status: string; dueDate: string | null }>
-) => {
-  const { dueDate, ...rest } = data;
+// Get all projects for a user
+export const getAllProjects = (userId: number) => {
+  return prisma.project.findMany({
+    where: { ownerId: userId },
+  });
+};
 
-  return prisma.task.updateMany({
-    where: { id, ownerId: userId },
-    data: {
-      ...rest,
-      dueDate: dueDate ? new Date(dueDate) : null, 
+// Get project by ID
+export const getProjectById = (id: number, userId: number) => {
+  return prisma.project.findFirst({
+    where: {
+      id,
+      ownerId: userId,
     },
   });
 };
 
+// Update a project
+export const updateProject = (
+  id: number,
+  userId: number,
+  data: Partial<{
+    title: string;
+    description: string;
+    status: string;
+    dueDate: string | null;
+  }>
+) => {
+  const { dueDate, ...rest } = data;
 
-//deleting a task
-export const deleteTask = (id: number, userId:number) => {
-  return prisma.task.deleteMany({
-    where: {id, ownerId: userId},
+  return prisma.project.updateMany({
+    where: { id, ownerId: userId },
+    data: {
+      ...rest,
+      dueDate: dueDate ? new Date(dueDate) : null,
+    },
   });
 };
 
-//Columns
-
-//create column
-export const createColumn = async (title: string) => {
-  return prisma.column.create({data:{title}});
-}
-
-//get all column
-export const getAllColumns = async () => {
-  return prisma.column.findMany({include:{ cards: true }});
-}
-
-//get column by id
-export const getColumnById = async (id: number) => {
-  return prisma.column.findUnique({ where: { id }, include: { cards: true } });
-};
-
-//delete column
-export const deleteColumn = async (id: number) => {
-  return prisma.column.delete({ where: { id } });
+// Delete a project
+export const deleteProject = (id: number, userId: number) => {
+  return prisma.project.deleteMany({
+    where: { id, ownerId: userId },
+  });
 };
 
 
-//card
 
-//createCard
-export const createCard = async (title: string, columnId: number) => {
-  return prisma.card.create({ data: { title, columnId } });
+
+// create task - now accepts all relevant fields
+export const createTask = async (
+  title: string,
+  description: string | null,
+  status: string,
+  dueDate: Date | null,
+  projectId: number
+) => {
+  return prisma.task.create({
+    data: {
+      title,
+      description,
+      status,
+      dueDate,
+      projectId,
+    },
+  });
 };
 
-//deleteCard
-export const deleteCard = async (id: number) => {
-  return prisma.card.delete({ where: { id } });
+// get all tasks - optionally include related project if you want
+export const getAllTasks = async () => {
+  return prisma.task.findMany({
+    include: { project: true }, // include related project
+  });
 };
 
-//updateCard
-export const updateCard = async (id: number, title: string) => {
-  return prisma.card.update({ where: { id }, data: { title } });
+// get task by id
+export const getTaskById = async (id: number) => {
+  return prisma.task.findUnique({
+    where: { id },
+    include: { project: true },
+  });
+};
+
+// update task - partial update with flexible fields
+export const updateTask = async (
+  id: number,
+  data: Partial<{
+    title: string;
+    description: string | null;
+    status: string;
+    dueDate: Date | null;
+    projectId: number;
+  }>
+) => {
+  return prisma.task.update({
+    where: { id },
+    data,
+  });
+};
+
+// delete task
+export const deleteTask = async (id: number) => {
+  return prisma.task.delete({
+    where: { id },
+  });
 };

@@ -7,9 +7,9 @@ const options: swaggerJSDoc.Options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Task Manager API',
+      title: 'Trello API',
       version: '1.0.0',
-      description: 'API documentation for task manager app',
+      description: 'API documentation for Trello app',
     },
     components: {
       securitySchemes: {

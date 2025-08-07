@@ -1,11 +1,9 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv'
-import pool from './database';
 import users from './routes/users';
-import tasks from './routes/tasks';
-import list from './routes/list';
-import card from './routes/card';
+import projects from './routes/project';
+import task from './routes/task';
 import { swaggerUiHandler, swaggerDocHandler } from './swagger';
 
 dotenv.config();
@@ -16,11 +14,10 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors())
 
-// Register routes
 app.use('/api', users);
-app.use('/api', tasks);
-app.use('/api', list);
-app.use('/api', card);
+app.use('/api', projects);
+app.use('/api', task);
+
 
 app.use('/api-docs', swaggerUiHandler, swaggerDocHandler);
 
